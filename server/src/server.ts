@@ -2,13 +2,7 @@ import express from "express"
 import documentRoutes from "./routes/document.routes"
 import { createServer } from "node:http"
 import { Server } from "socket.io"
-// import { updateDocumentContentController } from "./controllers/document.controller"
-import { updateDocumentContent } from "./services/document.service"
-
-type DocumentParams = {
-  documentId: string
-  content: string
-}
+import { scheduleDocumentSave } from "./socket/debounce"
 
 const PORT = process.env.PORT
 
@@ -38,20 +32,16 @@ io.on("connection", (socket) => {
     socket.join(documentId)
   })
 
-  socket.on(
-    "document:update",
-    async ({
+  socket.on("document:update", ({ documentId, content }) => {
+    // Broadcast directly
+    socket.to(documentId).emit("document:updated", {
       documentId,
       content,
-    }: {
-      documentId: string
-      content: string
-    }) => {
-      const updatedDocument = await updateDocumentContent(documentId, content)
+    })
 
-      socket.to(documentId).emit("document:updated", updatedDocument)
-    },
-  )
+    // Save after debounce
+    scheduleDocumentSave(documentId, content)
+  })
 
   socket.on("disconnect", () => {
     console.log(`User disconnected on: ${socket.id}`)
