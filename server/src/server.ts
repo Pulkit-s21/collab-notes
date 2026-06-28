@@ -1,5 +1,6 @@
 import express from "express"
 import documentRoutes from "./routes/document.routes"
+import cors from "cors"
 import { createServer } from "node:http"
 import { Server } from "socket.io"
 import { scheduleDocumentSave } from "./socket/debounce"
@@ -48,6 +49,7 @@ io.on("connection", (socket) => {
   })
 })
 
+app.use(cors())
 app.use(express.json())
 
 app.use("/documents", documentRoutes)
