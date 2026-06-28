@@ -11,11 +11,6 @@ export const createDocument = async (title: string) => {
 
 export const getDocuments = async () => {
   return prisma.document.findMany({
-    select: {
-      id: true,
-      createdAt: true,
-      updatedAt: true,
-    },
     orderBy: {
       createdAt: "desc",
     },
