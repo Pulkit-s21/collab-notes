@@ -1,9 +1,17 @@
+import type { Dispatch, SetStateAction } from "react"
 import {
   updateDocumentContent,
   updateDocumentTitle,
 } from "../socket/document.events"
 
-export default function Editor({ doc, setDoc }) {
+type Document = { id: string; title: string; content?: string }
+
+type EditorProps = {
+  doc: Document
+  setDoc: Dispatch<SetStateAction<Document | null>>
+}
+
+export default function Editor({ doc, setDoc }: EditorProps) {
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     setDoc((prev) => (prev ? { ...prev, title: value } : prev))

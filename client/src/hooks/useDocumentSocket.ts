@@ -1,10 +1,13 @@
-import { useEffect } from "react"
+import { useEffect, type Dispatch, type SetStateAction } from "react"
 import { socket } from "../socket/socket"
 import { joinDocument } from "../socket/document.events"
 
 type Document = { id: string; title: string; content?: string }
 
-export const useDocumentSocket = (doc: Document, setDoc) => {
+export const useDocumentSocket = (
+  doc: Document | null,
+  setDoc: Dispatch<SetStateAction<Document | null>>,
+) => {
   useEffect(() => {
     socket.connect()
 
