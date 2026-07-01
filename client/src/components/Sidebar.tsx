@@ -7,9 +7,11 @@ type Document = { id: string; title: string; content?: string }
 
 type SidebarProps = {
   setDoc: (doc: Document) => void
+  isOpen: boolean
+  onClose: () => void
 }
 
-export default function Sidebar({ setDoc }: SidebarProps) {
+export default function Sidebar({ setDoc, isOpen, onClose }: SidebarProps) {
   const [documents, setDocuments] = useState<Document[]>([])
 
   useEffect(() => {
@@ -27,10 +29,11 @@ export default function Sidebar({ setDoc }: SidebarProps) {
   const handleGetDoc = async (id: string) => {
     const res = await getDocument(id)
     setDoc(res)
+    onClose()
   }
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar${isOpen ? " sidebar-open" : ""}`}>
       <div className="sidebar-header">
         <div className="sidebar-logo">
           <svg
@@ -47,6 +50,24 @@ export default function Sidebar({ setDoc }: SidebarProps) {
           </svg>
         </div>
         <span className="sidebar-title">collab-notes</span>
+        <button
+          className="sidebar-close-btn"
+          onClick={onClose}
+          aria-label="Close documents menu"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M6 18 18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
       </div>
 
       <div className="sidebar-body">
