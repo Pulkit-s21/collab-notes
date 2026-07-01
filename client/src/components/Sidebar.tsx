@@ -3,8 +3,14 @@ import { useEffect, useState } from "react"
 import { getDocuments, getDocument } from "../api/document"
 import CreateDoc from "./CreateDoc"
 
-export default function Sidebar({ setDoc }) {
-  const [documents, setDocuments] = useState([])
+type Document = { id: string; title: string; content?: string }
+
+type SidebarProps = {
+  setDoc: (doc: Document) => void
+}
+
+export default function Sidebar({ setDoc }: SidebarProps) {
+  const [documents, setDocuments] = useState<Document[]>([])
 
   useEffect(() => {
     const fetchDocs = async () => {
@@ -14,7 +20,7 @@ export default function Sidebar({ setDoc }) {
     fetchDocs()
   }, [])
 
-  const handleDocCreated = (doc: { id: string; title: string }) => {
+  const handleDocCreated = (doc: Document) => {
     setDocuments((prev) => [...prev, doc])
   }
 
@@ -46,7 +52,7 @@ export default function Sidebar({ setDoc }) {
       <div className="sidebar-body">
         <p className="sidebar-section-label">Documents</p>
 
-        {documents.map((doc: { id: string; title: string }) => (
+        {documents.map((doc) => (
           <div key={doc.id} className="sidebar-doc-item">
             <svg
               viewBox="0 0 24 24"

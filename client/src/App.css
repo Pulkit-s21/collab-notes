@@ -1,6 +1,6 @@
 .app-layout {
   display: flex;
-  height: 100vh;
+  height: 94vh;
   overflow: hidden;
 }
 
@@ -8,8 +8,6 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
   background: var(--bg);
   overflow: hidden;
 }
@@ -20,6 +18,7 @@
   align-items: center;
   gap: 14px;
   user-select: none;
+  margin: auto;
 }
 
 .doc-area-icon {
@@ -34,4 +33,47 @@
   color: var(--text);
   opacity: 0.45;
   letter-spacing: 0.02em;
+}
+
+.doc-editor {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  height: 100%;
+  width: 100%;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 32px 40px;
+  box-sizing: border-box;
+  gap: 10px;
+}
+
+.doc-editor-id {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text);
+  opacity: 0.45;
+}
+
+.doc-editor-title {
+  font-family: var(--heading);
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--text-h);
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 4px 0;
+}
+
+.doc-editor-content {
+  flex: 1;
+  resize: none;
+  border: none;
+  outline: none;
+  background: transparent;
+  font: inherit;
+  color: var(--text-h);
+  line-height: 160%;
+  padding: 4px 0;
 }

@@ -1,20 +1,80 @@
-import { useState } from "react"
 import "./App.css"
+import { useEffect, useState } from "react"
 import Sidebar from "./components/Sidebar"
+import Editor from "./components/Editor"
+import { socket } from "./socket/socket"
+
+type Document = { id: string; title: string; content?: string }
 
 function App() {
-  const [doc, setDoc] = useState([])
+  const [doc, setDoc] = useState<Document | null>(null)
+
+  useEffect(() => {
+    socket.connect()
+
+    socket.on("connect", () => {
+      console.log("Socket Connected")
+    })
+
+    return () => {
+      socket.disconnect()
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!doc) return
+
+    socket.emit("join-document", doc.id)
+  }, [doc])
+
+  useEffect(() => {
+    socket.on("document:updated", (updatedDocument) => {
+      setDoc((prev) => {
+        if (!prev) return prev
+
+        if (prev.id !== updatedDocument.documentId) {
+          return prev
+        }
+
+        return {
+          ...prev,
+          content: updatedDocument.content,
+        }
+      })
+    })
+
+    return () => {
+      socket.off("document:updated")
+    }
+  }, [])
+
+  useEffect(() => {
+    socket.on("document:title:updated", (updatedTitle) => {
+      setDoc((prev) => {
+        if (!prev) return prev
+
+        if (prev.id !== updatedTitle.documentId) {
+          return prev
+        }
+
+        return {
+          ...prev,
+          title: updatedTitle.title,
+        }
+      })
+    })
+
+    return () => {
+      socket.off("document:updated")
+    }
+  }, [])
 
   return (
     <div className="app-layout">
       <Sidebar setDoc={setDoc} />
       <main className="app-main">
         {doc ? (
-          <div>
-            <p>{doc.id}</p>
-            <p>{doc.title}</p>
-            <p>{doc.content}</p>
-          </div>
+          <Editor key={doc.id} doc={doc} setDoc={setDoc} />
         ) : (
           <div className="doc-area-placeholder">
             <svg

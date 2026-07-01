@@ -3,7 +3,10 @@ import documentRoutes from "./routes/document.routes"
 import cors from "cors"
 import { createServer } from "node:http"
 import { Server } from "socket.io"
-import { scheduleDocumentSave } from "./socket/debounce"
+import {
+  scheduleDocumentSave,
+  scheduleDocumentTitleSave,
+} from "./socket/debounce"
 
 const PORT = process.env.PORT
 
@@ -29,6 +32,8 @@ const io = new Server(server, {
 })
 
 io.on("connection", (socket) => {
+  console.log(`User Connected: ${socket.id}`)
+
   socket.on("join-document", (documentId: string) => {
     socket.join(documentId)
   })
@@ -42,6 +47,17 @@ io.on("connection", (socket) => {
 
     // Save after debounce
     scheduleDocumentSave(documentId, content)
+  })
+
+  socket.on("document:title:update", ({ documentId, title }) => {
+    // Broadcast directly
+    socket.to(documentId).emit("document:title:updated", {
+      documentId,
+      title,
+    })
+
+    // Save after debounce
+    scheduleDocumentTitleSave(documentId, title)
   })
 
   socket.on("disconnect", () => {
