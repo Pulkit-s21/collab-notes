@@ -1,73 +1,15 @@
 import "./App.css"
-import { useEffect, useState } from "react"
-import Sidebar from "./components/Sidebar"
-import Editor from "./components/Editor"
-import { socket } from "./socket/socket"
+const Sidebar = lazy(() => import("./components/Sidebar"))
+const Editor = lazy(() => import("./components/Editor"))
+import { lazy, useState } from "react"
+import { useDocumentSocket } from "./hooks/useDocumentSocket"
 
 type Document = { id: string; title: string; content?: string }
 
 function App() {
   const [doc, setDoc] = useState<Document | null>(null)
 
-  useEffect(() => {
-    socket.connect()
-
-    socket.on("connect", () => {
-      console.log("Socket Connected")
-    })
-
-    return () => {
-      socket.disconnect()
-    }
-  }, [])
-
-  useEffect(() => {
-    if (!doc) return
-
-    socket.emit("join-document", doc.id)
-  }, [doc])
-
-  useEffect(() => {
-    socket.on("document:updated", (updatedDocument) => {
-      setDoc((prev) => {
-        if (!prev) return prev
-
-        if (prev.id !== updatedDocument.documentId) {
-          return prev
-        }
-
-        return {
-          ...prev,
-          content: updatedDocument.content,
-        }
-      })
-    })
-
-    return () => {
-      socket.off("document:updated")
-    }
-  }, [])
-
-  useEffect(() => {
-    socket.on("document:title:updated", (updatedTitle) => {
-      setDoc((prev) => {
-        if (!prev) return prev
-
-        if (prev.id !== updatedTitle.documentId) {
-          return prev
-        }
-
-        return {
-          ...prev,
-          title: updatedTitle.title,
-        }
-      })
-    })
-
-    return () => {
-      socket.off("document:updated")
-    }
-  }, [])
+  useDocumentSocket(doc, setDoc)
 
   return (
     <div className="app-layout">

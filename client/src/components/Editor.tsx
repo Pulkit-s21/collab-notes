@@ -1,51 +1,29 @@
-import { useState } from "react"
-import { updateContent, updateTitle } from "../api/document"
-import { socket } from "../socket/socket"
+import type { Dispatch, SetStateAction } from "react"
+import {
+  updateDocumentContent,
+  updateDocumentTitle,
+} from "../socket/document.events"
 
-export default function Editor({ doc, setDoc }) {
-  const [oldDoc, setOldDoc] = useState({
-    title: doc.title,
-    content: doc.content,
-  })
+type Document = { id: string; title: string; content?: string }
 
-  const handleSaveDoc = async (id: string, title: string, content: string) => {
-    if (oldDoc.title !== title) {
-      await updateTitle(id, title)
-    }
+type EditorProps = {
+  doc: Document
+  setDoc: Dispatch<SetStateAction<Document | null>>
+}
 
-    if (oldDoc.content !== content) {
-      await updateContent(id, content)
-    }
-
-    setOldDoc({ title, content })
-  }
-
+export default function Editor({ doc, setDoc }: EditorProps) {
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
+    setDoc((prev) => (prev ? { ...prev, title: value } : prev))
 
-    setDoc((prev) =>
-      prev
-        ? {
-            ...prev,
-            title: value,
-          }
-        : prev,
-    )
-
-    socket.emit("document:title:update", {
-      documentId: doc.id,
-      title: value,
-    })
+    updateDocumentTitle(doc.id, value)
   }
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value
-    setDoc((doc) => ({ ...doc, content: value }))
+    setDoc((prev) => (prev ? { ...prev, content: value } : prev))
 
-    socket.emit("document:update", {
-      documentId: doc.id,
-      content: value,
-    })
+    updateDocumentContent(doc.id, value)
   }
 
   return (
@@ -63,20 +41,6 @@ export default function Editor({ doc, setDoc }) {
           onChange={handleContentChange}
         />
       </div>
-
-      <button
-        disabled={
-          !(oldDoc.title !== doc.title || oldDoc.content !== doc.content)
-        }
-        onClick={() => handleSaveDoc(doc.id, doc.title, doc.content)}
-        style={{
-          width: "fit-content",
-          alignSelf: "end",
-          paddingInline: "1rem",
-        }}
-      >
-        Save
-      </button>
     </>
   )
 }

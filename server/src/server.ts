@@ -38,9 +38,9 @@ io.on("connection", (socket) => {
     socket.join(documentId)
   })
 
-  socket.on("document:update", ({ documentId, content }) => {
+  socket.on("document:content:update", ({ documentId, content }) => {
     // Broadcast directly
-    socket.to(documentId).emit("document:updated", {
+    socket.to(documentId).emit("document:content:updated", {
       documentId,
       content,
     })
