@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const document_controller_1 = require("../controllers/document.controller");
+const router = (0, express_1.Router)();
+router.post("/", document_controller_1.createDocumentController);
+router.get("/", document_controller_1.getDocumentsController);
+router.get("/:documentId", document_controller_1.getUniqueDocumentController);
+router.patch("/:documentId/content", document_controller_1.updateDocumentContentController);
+router.patch("/:documentId/title", document_controller_1.updateDocumentTitleController);
+router.get("/:documentId/history", document_controller_1.getDocumentHistoryController);
+exports.default = router;
