@@ -8,13 +8,39 @@ type Document = { id: string; title: string; content?: string }
 
 function App() {
   const [doc, setDoc] = useState<Document | null>(null)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   useDocumentSocket(doc, setDoc)
 
   return (
     <div className="app-layout">
-      <Sidebar setDoc={setDoc} />
+      <Sidebar
+        setDoc={setDoc}
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
+      {!sidebarOpen && (
+        <button className="app-menu-btn" onClick={() => setSidebarOpen(true)} />
+      )}
       <main className="app-main">
+        <button
+          className="app-menu-btn"
+          onClick={() => setSidebarOpen(true)}
+          aria-label="Open documents menu"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.75"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+            />
+          </svg>
+        </button>
         {doc ? (
           <Editor key={doc.id} doc={doc} setDoc={setDoc} />
         ) : (
