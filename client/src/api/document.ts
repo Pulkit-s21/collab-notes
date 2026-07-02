@@ -18,6 +18,12 @@ export const createDocument = async (title: string) => {
   return res.data
 }
 
+export const deleteDocument = async (id: string) => {
+  const res = await api.delete(`/documents/${id}`)
+
+  return res.data
+}
+
 export const updateContent = async (id: string, content: string) => {
   const res = await api.patch(`/documents/${id}/content`, {
     content,
