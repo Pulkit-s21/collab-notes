@@ -1,6 +1,7 @@
 import { Request, Response } from "express"
 import {
   createDocument,
+  deleteDocument,
   getDocument,
   getDocumentHistory,
   getDocuments,
@@ -119,6 +120,21 @@ export const getDocumentHistoryController = async (
   } catch (err) {
     console.error(`Error: ${err}`)
 
+    return res.status(500).json({ message: "Something went wrong" })
+  }
+}
+
+export const deleteDocumentController = async (
+  req: Request<DocumentParams>,
+  res: Response,
+) => {
+  try {
+    const { documentId } = req.params
+    await deleteDocument(documentId)
+
+    return res.status(201).json({ message: "Document deleted" })
+  } catch (err) {
+    console.error(`Error: ${err}`)
     return res.status(500).json({ message: "Something went wrong" })
   }
 }
