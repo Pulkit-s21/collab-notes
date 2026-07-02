@@ -25,7 +25,7 @@ export const scheduleDocumentSave = (documentId: string, content: string) => {
     } finally {
       contentDebounceTimers.delete(documentId)
     }
-  }, 1000)
+  }, 4000)
 
   contentDebounceTimers.set(documentId, timer)
 }
@@ -52,7 +52,7 @@ export const scheduleDocumentTitleSave = (
     } finally {
       titleDebounceTimers.delete(documentId)
     }
-  }, 1000)
+  }, 4000)
 
   titleDebounceTimers.set(documentId, timer)
 }
