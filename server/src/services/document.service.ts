@@ -106,3 +106,17 @@ export const getDocumentHistory = async (documnetId: string) => {
     orderBy: { version: "desc" },
   })
 }
+
+export const deleteDocument = async (documentId: string) => {
+  const document = await prisma.document.findUnique({
+    where: { id: documentId },
+  })
+
+  if (!document) {
+    throw new Error("Document not found")
+  }
+  
+  return prisma.document.delete({
+    where: { id: documentId },
+  })
+}

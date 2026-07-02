@@ -1,7 +1,8 @@
 import "./Sidebar.css"
 import { useEffect, useState } from "react"
-import { getDocuments, getDocument } from "../api/document"
+import { getDocuments, getDocument, deleteDocument } from "../api/document"
 import CreateDoc from "./CreateDoc"
+import { Trash2 } from "lucide-react"
 
 type Document = { id: string; title: string; content?: string }
 
@@ -30,6 +31,11 @@ export default function Sidebar({ setDoc, isOpen, onClose }: SidebarProps) {
     const res = await getDocument(id)
     setDoc(res)
     onClose()
+  }
+
+  const handleDeleteDoc = async (id: string) => {
+    await deleteDocument(id)
+    setDocuments((prev) => prev.filter((d) => d.id !== id))
   }
 
   return (
@@ -95,6 +101,10 @@ export default function Sidebar({ setDoc, isOpen, onClose }: SidebarProps) {
             >
               {doc.title}
             </span>
+
+            <button onClick={() => handleDeleteDoc(doc.id)}>
+              <Trash2 color="red" />
+            </button>
           </div>
         ))}
       </div>
